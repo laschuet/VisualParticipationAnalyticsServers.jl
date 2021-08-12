@@ -94,7 +94,7 @@ end
 """
     start(port::Integer)
 """
-function start(port::Integer=3010)
+function startrest(port::Integer=3010)
     @async HTTP.serve(handlecors, HTTP.Sockets.localhost, port)
     println("REST server is running at http://$(HTTP.Sockets.localhost):$port")
 end
