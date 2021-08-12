@@ -1,7 +1,7 @@
 module VisualParticipationAnalyticsServers
 
 using DataFrames
-using HTTP3
+using HTTP
 using JSON3
 using SQLite
 using Tables
