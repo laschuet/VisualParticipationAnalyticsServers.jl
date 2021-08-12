@@ -92,7 +92,7 @@ function handlecors(req::HTTP.Request)
 end
 
 """
-    start(port::Integer)
+    startrest(port::Integer)
 """
 function startrest(port::Integer=3010)
     @async HTTP.serve(handlecors, HTTP.Sockets.localhost, port)

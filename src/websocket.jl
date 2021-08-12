@@ -17,7 +17,7 @@ function runjobs()
 end
 
 """
-    start(port::Integer)
+    startws(port::Integer)
 """
 function startws(port::Integer=3020, nthreads=Threads.nthreads())
     @async HTTP.listen(HTTP.Sockets.localhost, port) do http
