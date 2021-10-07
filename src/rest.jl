@@ -1,6 +1,7 @@
 const API_ROOT = "/api/v1"
-const DATASET_ROOT = "$(homedir())/datasets/participation/databases"
 const CLUSTERING_ROOT = "$(homedir())/datasets/participation/clusterings"
+const DATASET_ROOT = "$(homedir())/datasets/participation/databases"
+const DISTANCE_ROOT = "$(homedir())/datasets/participation/distances"
 const HEADERS = [
     "Access-Control-Allow-Headers" => "*",
     "Access-Control-Allow-Methods" => "GET; POST; OPTIONS",
@@ -55,12 +56,33 @@ function getclustering(req::HTTP.Request)
     return read("$CLUSTERING_ROOT/$datasetname/$clustering", String)
 end
 
+"""
+    getdistances(req::HTTP.Request)
+"""
+function getdistances(req::HTTP.Request)
+    datasetname = HTTP.URIs.splitpath(req.target)[4]
+    names = readdir("$DISTANCE_ROOT/$datasetname")
+    filter!(endswith(".json"), names)
+    return names
+end
+
+"""
+    getdistance(req::HTTP.Request)
+"""
+function getdistance(req::HTTP.Request)
+    datasetname = HTTP.URIs.splitpath(req.target)[4]
+    distance = HTTP.URIs.splitpath(req.target)[6]
+    return read("$DISTANCE_ROOT/$datasetname/$distance", String)
+end
+
 router = HTTP.Router()
 HTTP.@register(router, "GET", "$API_ROOT/datasets", getdatasets)
 HTTP.@register(router, "GET", "$API_ROOT/datasets/*/clusterings", getclusterings)
 HTTP.@register(router, "GET", "$API_ROOT/datasets/*/clustering/*", getclustering)
 HTTP.@register(router, "GET", "$API_ROOT/datasets/*/contributions", getcontributions)
 HTTP.@register(router, "GET", "$API_ROOT/datasets/*/contribution/*", getcontribution)
+HTTP.@register(router, "GET", "$API_ROOT/datasets/*/distances", getdistances)
+HTTP.@register(router, "GET", "$API_ROOT/datasets/*/distance/*", getdistance)
 
 """
     handlejson(req::HTTP.Request)
