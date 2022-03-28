@@ -2,6 +2,7 @@ const API_ROOT = "/api/v1"
 const CLUSTERING_ROOT = "$(homedir())/datasets/participation/clusterings"
 const DATASET_ROOT = "$(homedir())/datasets/participation/databases"
 const DISTANCE_ROOT = "$(homedir())/datasets/participation/distances"
+const PROTOTYPES_CRITICISMS_ROOT = "$(homedir())/datasets/participation/prototypes_criticisms"
 const HEADERS = [
     "Access-Control-Allow-Headers" => "*",
     "Access-Control-Allow-Methods" => "GET; POST; OPTIONS",
@@ -75,6 +76,25 @@ function getdistance(req::HTTP.Request)
     return read("$DISTANCE_ROOT/$datasetname/$distance", String)
 end
 
+"""
+    getprototypescriticisms(req::HTTP.Request)
+"""
+function getprototypescriticisms(req::HTTP.Request)
+    datasetname = HTTP.URIs.splitpath(req.target)[4]
+    names = readdir("$PROTOTYPES_CRITICISMS_ROOT/$datasetname")
+    filter!(endswith(".json"), names)
+    return names
+end
+
+"""
+    getprototypecriticism(req::HTTP.Request)
+"""
+function getprototypecriticism(req::HTTP.Request)
+    datasetname = HTTP.URIs.splitpath(req.target)[4]
+    prototypecriticism = HTTP.URIs.splitpath(req.target)[6]
+    return read("$PROTOTYPES_CRITICISMS_ROOT/$datasetname/$prototypecriticism", String)
+end
+
 router = HTTP.Router()
 HTTP.@register(router, "GET", "$API_ROOT/datasets", getdatasets)
 HTTP.@register(router, "GET", "$API_ROOT/datasets/*/clusterings", getclusterings)
@@ -83,6 +103,8 @@ HTTP.@register(router, "GET", "$API_ROOT/datasets/*/contributions", getcontribut
 HTTP.@register(router, "GET", "$API_ROOT/datasets/*/contribution/*", getcontribution)
 HTTP.@register(router, "GET", "$API_ROOT/datasets/*/distances", getdistances)
 HTTP.@register(router, "GET", "$API_ROOT/datasets/*/distance/*", getdistance)
+HTTP.@register(router, "GET", "$API_ROOT/datasets/*/prototypescriticisms", getprototypescriticisms)
+HTTP.@register(router, "GET", "$API_ROOT/datasets/*/prototypecriticism/*", getprototypecriticism)
 
 """
     handlejson(req::HTTP.Request)
